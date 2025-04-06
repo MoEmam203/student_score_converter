@@ -9,15 +9,16 @@ class StudentScoreService
     public function transformScores($scores)
     {
         // Transform the scores into the desired structure
-        return $scores->map(function ($studentScores, $studentId) {
-            $firstRecord = $studentScores->first();
-
-            return [
-                'student_id' => (int) $studentId,
-                'name' => $firstRecord['name'] ?? 'No Name',
-                'subject' => $firstRecord['subject'] ?? 'No Subject',
-                'scores' => $this->sortScores($studentScores->toArray(), $firstRecord['subject'] ?? 'No Subject'),
-            ];
+        return $scores->flatMap(function ($studentScores, $studentId) {
+            return $studentScores->map(function ($subjectScores, $subject) use ($studentId) {
+                $firstRecord = $subjectScores->first();
+                return [
+                    'student_id' => (int) $studentId,
+                    'name' => $firstRecord['name'],
+                    'subject' => $subject ,
+                    'scores' => $this->sortScores(scores: $subjectScores->toArray(), subject: $subject),
+                ];
+            })->values()->toArray();
         })->values()->toArray();
     }
 

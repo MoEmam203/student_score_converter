@@ -12,6 +12,6 @@ class StudentScoreImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $collection)
     {
-        $this->scores = $collection->sortBy('student_id')->groupBy(['student_id']);
+        $this->scores = $collection->sortBy('student_id')->groupBy(['student_id', 'subject']);
     }
 }
